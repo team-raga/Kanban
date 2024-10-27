@@ -1,0 +1,29 @@
+---
+import Layout from '@components/layout/Layout.astro'
+import { newtClient } from '@lib/newt'
+import type { Article } from '@lib/newt'
+
+const { items: articles } = await newtClient.getContents<Article>({
+  appUid: 'news',
+  modelUid: 'article',
+  query: {
+    select: ['title', 'slug', 'body'],
+  },
+})
+---
+
+<Layout title="お知らせ｜Kanban" description="Kanbanからお知らせです。">
+  <section>
+    <ul>
+      {
+        articles.map((article: { slug: any; title: unknown }) => {
+          return (
+            <li>
+              <a href={`/news/${article.slug}`}>{article.title}</a>
+            </li>
+          )
+        })
+      }
+    </ul>
+  </section>
+</Layout>

@@ -1,0 +1,57 @@
+---
+interface ZennArticle {
+  id: number;
+  post_type: "Article";
+  title: string;
+  slug: string;
+  comments_count: number;
+  liked_count: number;
+  body_letters_count: number;
+  article_type: "tech";
+  emoji: string;
+  is_suspending_private: boolean;
+  published_at: Date;
+  body_updated_at: Date;
+  source_repo_updated_at: null;
+  pinned: boolean;
+  path: string;
+  user: {
+    id: number;
+    username: string;
+    name: string;
+    avatar_small_url: string;
+  };
+  publication: null;
+}
+
+// Astroの組み込みfetch APIを使用
+const response = await fetch('https://zenn.dev/api/articles?username=1000_x_t30');
+const data = await response.json();
+const articles = data.articles as ZennArticle[];
+---
+
+<!-- テンプレート部分 -->
+<div>
+  {articles.map((article) => (
+    <article class="mb-4 p-4 border rounded-lg">
+      <div class="flex items-center gap-2">
+        <img 
+          src={article.user.avatar_small_url} 
+          alt={article.user.name}
+          class="w-8 h-8 rounded-full"
+        />
+        <span>{article.user.name}</span>
+      </div>
+      <h2 class="text-xl font-bold mt-2">
+        <a href={`https://zenn.dev${article.path}`} target="_blank" rel="noopener noreferrer">
+          {article.emoji} {article.title}
+        </a>
+      </h2>
+      <div class="mt-2 text-sm text-gray-600">
+        <span>💭 {article.comments_count}</span>
+        <span class="ml-4">❤️ {article.liked_count}</span>
+        <span class="ml-4">📝 {new Date(article.published_at).toLocaleDateString()}</span>
+      </div>
+    </article>
+  ))}
+</div>
