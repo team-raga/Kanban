@@ -24,7 +24,7 @@ const { items: articles } = await newtClient.getContents<Article>({
           articles.map((article) => {
             return (
               <li>
-                <a href={`/articles/${article.slug}`}>{article.title}</a>
+                <a href={`/Kanban/news/${article.slug}`}>{article.title}</a>
               </li>
             )
           })
