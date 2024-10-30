@@ -16,19 +16,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+      
       - name: Install dependencies
         run: npm ci
+      
+      # キャッシュをクリアするステップを追加
+      - name: Clear cache
+        run: npm run clean || true
+      
+      # Tailwindのビルドを明示的に実行
+      - name: Build Tailwind
+        run: npm run build:css || npx tailwindcss -i ./src/styles/global.css -o ./dist/styles/global.css
+      
       - name: Build
         env:
           NEWT_SPACE_UID: ${{ secrets.NEWT_SPACE_UID }}
           NEWT_CDN_API_TOKEN: ${{ secrets.NEWT_CDN_API_TOKEN }}
           BASE_URL: '/Kanban/'
+          NODE_ENV: 'production'
         run: npm run build
+      
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

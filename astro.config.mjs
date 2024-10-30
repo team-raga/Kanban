@@ -7,7 +7,9 @@ export default defineConfig({
   site: 'https://team-raga.github.io',
   base: '/',
   integrations: [
-    tailwind({}),
+    tailwind({
+      config: { path: './tailwind.config.js' }
+    }),
     react()
   ],
 });
