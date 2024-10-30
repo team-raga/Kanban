@@ -24,15 +24,10 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: |
-          npm ci
-          npm install -D @astrojs/tailwind tailwindcss
-      
+        run: npm ci
+          
       - name: Clear cache
-        run: |
-          rm -rf dist
-          rm -rf .astro
-          rm -rf node_modules/.cache
+        run: npm run clean || true
       
       - name: Build
         env:
@@ -40,16 +35,7 @@ jobs:
           NEWT_CDN_API_TOKEN: ${{ secrets.NEWT_CDN_API_TOKEN }}
           BASE_URL: '/Kanban/'
           NODE_ENV: 'production'
-        run: |
-          npm run build
-          
-      # ビルド結果の確認（デバッグ用）
-      - name: List build output
-        run: |
-          echo "Listing dist directory:"
-          ls -la dist/
-          echo "Listing dist/assets directory:"
-          ls -la dist/assets/
+        run: npm run build
       
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
