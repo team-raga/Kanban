@@ -2,29 +2,69 @@
 import Layout from '@components/layout/Layout.astro'
 import { newtClient } from '@lib/newt'
 import type { Article } from '@lib/newt'
-import ZennArticles from '@components/features/zenn/ZennArticles.astro'
+import { getArticleBySlug } from '@components/features/newt/getArticleBySlug'
+import { getZennArticles } from '@components/features/zenn/getZennArticles'
+import FirstView from '@components/ui/FirstView.astro'
+import SquareCard from '@components/common/SquareCard.astro'
 
-const { items: articles } = await newtClient.getContents<Article>({
+const baseUrl = import.meta.env.BASE_URL
+
+const { items: newArticles } = await newtClient.getContents<Article>({
   appUid: 'news',
   modelUid: 'article',
   query: {
     select: ['title', 'slug', 'body'],
   },
 })
+
+const firstViewArticle = await getArticleBySlug('view-contents', 'landing-page','first-view')
+const zennArticles = await getZennArticles()
 ---
 
 <Layout description="カンバンのサイトです。">
   <main>
-    <section>
-      <ZennArticles />
+    <div class="relative">
+      {firstViewArticle && <FirstView article={firstViewArticle} />}
+      <div
+        class="absolute bottom-0 left-0 -z-10 bg-slate-300"
+        style="width: 100%; height: 100px; clip-path: polygon(0 0, 0 100%, 100% 100%);"></div>
+    </div>
+    <section class="bg-slate-300 pl-8 py-12">
+      <h2 class="text-5xl font-bold">Zenn</h2>
+      {zennArticles && (
+        <div class="zennSwiper overflow-x-hidden relative px-12 pb-8">
+          <ul class="swiper-wrapper">
+            {zennArticles.map((article: any) => (
+              <li class="swiper-slide !w-[300px]">
+                <SquareCard
+                  title={article.title}
+                  icon={article.emoji}
+                  date={article.body_updated_at}
+                  href={`https://zenn.dev${article.path}`} />
+              </li>
+            ))}
+          </ul>
+          <div class="swiper-pagination absolute top-full !bottom-auto left-0"></div>
+
+          <div class="swiper-button swiper-button-prev"></div>
+          <div class="swiper-button swiper-button-next"></div>
+        </div>
+      )}
+
     </section>
-    <section>
-      <ul>
+    <section class="px-8 py-12">
+      <h2 class="text-5xl font-bold">News</h2>
+      <ul class="[&>li:first-child]:border-t [&>li]:border-b [&>li]:border-slate-300">
         {
-          articles.map((article) => {
+          newArticles.map((article) => {
             return (
               <li>
-                <a href={`/Kanban/news/${article.slug}`}>{article.title}</a>
+                <a
+                  class="flex gap-4 py-2"
+                  href={`${baseUrl}news/${article.slug}`}>
+                  <p><time datetime="">yyyy-mm-dd</time></p>
+                  <h3>{article.title}</h3>
+                </a>
               </li>
             )
           })
@@ -33,3 +73,32 @@ const { items: articles } = await newtClient.getContents<Article>({
     </section>
   </main>
 </Layout>
+
+<script>
+  import Swiper from 'swiper'
+  import { Navigation, Pagination } from 'swiper/modules'
+  import type { SwiperOptions } from 'swiper/types'
+  import 'swiper/css/bundle'
+
+  const swiperConfig: SwiperOptions = {
+    modules: [Navigation, Pagination],
+    slidesPerView: "auto",
+    autoHeight: true,
+    spaceBetween: 20,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    scrollbar: {
+      el: '.swiper-scrollbar',
+    },
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new Swiper('.zennSwiper', swiperConfig)
+  })
+</script>

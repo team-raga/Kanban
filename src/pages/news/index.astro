@@ -3,6 +3,8 @@ import Layout from '@components/layout/Layout.astro'
 import { newtClient } from '@lib/newt'
 import type { Article } from '@lib/newt'
 
+const baseUrl = import.meta.env.BASE_URL
+
 const { items: articles } = await newtClient.getContents<Article>({
   appUid: 'news',
   modelUid: 'article',
@@ -12,14 +14,14 @@ const { items: articles } = await newtClient.getContents<Article>({
 })
 ---
 
-<Layout title="お知らせ｜Kanban" description="Kanbanからお知らせです。">
+<Layout title="お知らせ" description="Kanbanからお知らせです。">
   <section>
     <ul>
       {
         articles.map((article: { slug: any; title: unknown }) => {
           return (
             <li>
-              <a href={`/Kanban/news/${article.slug}`}>{article.title}</a>
+              <a href={`${baseUrl}news/${article.slug}`}>{article.title}</a>
             </li>
           )
         })
