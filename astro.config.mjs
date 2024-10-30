@@ -8,8 +8,11 @@ export default defineConfig({
   base: '/',
   integrations: [
     tailwind({
-      config: { path: './tailwind.config.js' }
+      applyBaseStyles: true,
     }),
     react()
   ],
+  build: {
+    assets: '_assets'
+  }
 });
