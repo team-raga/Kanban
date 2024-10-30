@@ -11,8 +11,5 @@ export default defineConfig({
       applyBaseStyles: true,
     }),
     react()
-  ],
-  build: {
-    assets: '_assets'
-  }
+  ]
 });
