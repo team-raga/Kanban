@@ -5,7 +5,7 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://team-raga.github.io',
-  base: '/',
+  base: '/Kanban/',
   integrations: [
     tailwind({
       applyBaseStyles: true,
